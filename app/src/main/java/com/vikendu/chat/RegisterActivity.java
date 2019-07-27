@@ -1,6 +1,9 @@
 package com.vikendu.chat;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -149,16 +152,37 @@ public class RegisterActivity extends AppCompatActivity {
                 if(!task.isSuccessful())
                 {
                     Log.d("Register", "User Reg Failed");
+
+                    showRegistrationFailed("Registration Failed!");
+                }
+                else
+                {
+                    saveUsername();
+                    Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
                 }
             }
         });
     }
 
 
-    // TODO: Save the display name to Shared Preferences
+    private void saveUsername()
+    {
+        String display_name = mUsernameView.getText().toString();
+        SharedPreferences prefs = getSharedPreferences(CHAT_PREFS, 0);
+
+        prefs.edit().putString(DISPLAY_NAME_KEY, display_name).apply();
+    }
 
 
-    // TODO: Create an alert dialog to show in case registration failed
+    private void showRegistrationFailed(String message)
+    {
+        new AlertDialog.Builder(this)
+                .setTitle("Error")
+                .setMessage(message)
+                .setPositiveButton(android.R.string.ok, null)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
+    }
 
 
 
