@@ -1,14 +1,24 @@
 package com.vikendu.chat;
 
+import android.content.Context;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+
+import androidx.annotation.NonNull;
 
 
 public class RegisterActivity extends AppCompatActivity {
@@ -25,6 +35,7 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText mConfirmPasswordView;
 
     // Firebase instance variables
+    private FirebaseAuth mAuth;
 
 
 
@@ -50,7 +61,7 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
 
-        // TODO: Get hold of an instance of FirebaseAuth
+        mAuth = FirebaseAuth.getInstance();
 
 
     }
@@ -96,7 +107,7 @@ public class RegisterActivity extends AppCompatActivity {
             // form field with an error.
             focusView.requestFocus();
         } else {
-            // TODO: Call create FirebaseUser() here
+            createNewUser();
 
         }
     }
@@ -107,11 +118,41 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private boolean isPasswordValid(String password) {
-        //TODO: Add own logic to check for a valid password (minimum 6 characters)
-        return true;
+        String confirm_pass = mConfirmPasswordView.getText().toString();
+        Context context = getApplicationContext();
+        CharSequence text = "Passwords don't match!";
+        int duration = Toast.LENGTH_SHORT;
+
+        Toast toast = Toast.makeText(context, text, duration);
+
+        if(confirm_pass.equals(password) && confirm_pass.length() >= 6)
+        {
+            return true;
+        }
+        else
+        {
+            toast.show();
+            return false;
+        }
+
     }
 
-    // TODO: Create a Firebase user
+    private void createNewUser() {
+        String email = mEmailView.getText().toString();
+        String password = mPasswordView.getText().toString();
+
+        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                Log.d("Register", "Registering" + task.isSuccessful());
+
+                if(!task.isSuccessful())
+                {
+                    Log.d("Register", "User Reg Failed");
+                }
+            }
+        });
+    }
 
 
     // TODO: Save the display name to Shared Preferences
