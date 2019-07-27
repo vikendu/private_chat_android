@@ -176,6 +176,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void showRegistrationFailed(String message)
     {
+
         new AlertDialog.Builder(this)
                 .setTitle("Error")
                 .setMessage(message)
