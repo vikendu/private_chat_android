@@ -52,15 +52,15 @@ public class LoginActivity extends AppCompatActivity {
 
         // TODO: Grab an instance of FirebaseAuth
         mAuth = FirebaseAuth.getInstance();
-        if(mAuth.getCurrentUser() != null)
-        {
-            Intent mainIntent = new Intent(LoginActivity.this, MainChatActivity.class);
-            startActivity(mainIntent);
-            finish();
-        }
-        else{
-            attemptLogin();
-        }
+//        if(mAuth.getCurrentUser() != null)
+//        {
+//            Intent mainIntent = new Intent(LoginActivity.this, MainChatActivity.class);
+//            startActivity(mainIntent);
+//            finish();
+//        }
+//        else{
+//            attemptLogin();
+//        }
 
     }
 
