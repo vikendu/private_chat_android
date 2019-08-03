@@ -1,9 +1,10 @@
 package com.vikendu.chat;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -143,29 +144,30 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void createNewUser() {
-        String email = mEmailView.getText().toString();
-        String password = mPasswordView.getText().toString();
-
-        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                Log.d("Register", "Registering" + task.isSuccessful());
-
-                if(!task.isSuccessful())
-                {
-                    Log.d("Register", "User Reg Failed");
-
-                    showRegistrationFailed("Registration Failed!");
-                }
-                else
-                {
-                    saveUsername();
-                    Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
-                    startActivity(intent);
-                    finish();
-                }
-            }
-        });
+//        String email = mEmailView.getText().toString();
+//        String password = mPasswordView.getText().toString();
+//
+//        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+//            @Override
+//            public void onComplete(@NonNull Task<AuthResult> task) {
+//                Log.d("Register", "Registering" + task.isSuccessful());
+//
+//                if(!task.isSuccessful())
+//                {
+//                    Log.d("Register", "User Reg Failed");
+//
+//                    showRegistrationFailed("Registration Failed!");
+//                }
+//                else
+//                {
+//                    saveUsername();
+//                    Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+//                    startActivity(intent);
+//                    finish();
+//                }
+//            }
+//        });
+        new AsyncCaller().execute();
     }
 
 
@@ -206,6 +208,62 @@ public class RegisterActivity extends AppCompatActivity {
                 .setPositiveButton(android.R.string.ok, null)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();
+    }
+
+    private class AsyncCaller extends AsyncTask<Void, Void, Void> {
+        ProgressDialog pdLoading = new ProgressDialog(RegisterActivity.this);
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            //this method will be running on UI thread
+            pdLoading.setMessage("\tRegistering you...");
+            pdLoading.show();
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+
+
+
+            String email = mEmailView.getText().toString();
+            String password = mPasswordView.getText().toString();
+
+            mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(RegisterActivity.this, new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    Log.d("Register", "Registering" + task.isSuccessful());
+
+                    if(!task.isSuccessful())
+                    {
+                        Log.d("Register", "User Reg Failed");
+
+                        showRegistrationFailed("Registration Failed!");
+                    }
+                    else
+                    {
+                        saveUsername();
+                        Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
+                }
+            });
+
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+
+            //this method will be running on UI thread
+
+            pdLoading.dismiss();
+        }
+
     }
 
 

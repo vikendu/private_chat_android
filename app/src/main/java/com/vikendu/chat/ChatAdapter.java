@@ -83,6 +83,7 @@ public class ChatAdapter extends BaseAdapter {
     public int getCount() {
 
         Log.d("Speed", "getCount");
+
         return mSnapshotList.size();
 
     }
@@ -159,6 +160,7 @@ public class ChatAdapter extends BaseAdapter {
         holder.body.setLayoutParams(holder.params);
         Log.d("Speed", "Row Styled");
     }
+
 
     public void cleanup()
     {

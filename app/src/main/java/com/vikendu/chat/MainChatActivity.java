@@ -1,13 +1,16 @@
 package com.vikendu.chat;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.os.Handler;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -62,9 +65,6 @@ public class MainChatActivity extends AppCompatActivity {
             }
         });
 
-
-        // TODO: Add an OnClickListener to the sendButton to send a message
-
     }
 
     private void setupUsername() {
@@ -96,13 +96,20 @@ public class MainChatActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
-//        mAdapter = new ChatAdapter(this, mDatabaseRef, mDisplayName);
-//        mChatListView.setAdapter(mAdapter);
+        mAdapter = new ChatAdapter(this, mDatabaseRef, mDisplayName);
+        mChatListView.setAdapter(mAdapter);
 
-        new AsyncCaller().execute();
+        //new AsyncCaller().execute();
+
         Log.d("Speed", "Adapter gotten");
 
     }
+//    @Override
+//    public void onResume()
+//    {
+//        super.onResume();
+//        scrollMyListViewToBottom();
+//    }
 
 
     @Override
@@ -113,40 +120,57 @@ public class MainChatActivity extends AppCompatActivity {
 
     }
 
+    private void scrollMyListViewToBottom() {
 
-    private class AsyncCaller extends AsyncTask<Void, Void, Void> {
-        ProgressDialog pdLoading = new ProgressDialog(MainChatActivity.this);
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-            //this method will be running on UI thread
-            pdLoading.setMessage("\tLoading Messages...");
-            pdLoading.show();
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-
-            mAdapter = new ChatAdapter(MainChatActivity.this, mDatabaseRef, mDisplayName);
-            mChatListView.setAdapter(mAdapter);
-
-            //this method will be running on background thread so don't update UI frome here
-            //do your long running http tasks here,you dont want to pass argument and u can access the parent class' variable url over here
-
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            super.onPostExecute(result);
-
-            //this method will be running on UI thread
-
-            pdLoading.dismiss();
-        }
-
+        mChatListView.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+        //mChatListView.setAdapter(mAdapter);
+        mChatListView.post(new Runnable() {
+            @Override
+            public void run() {
+                // Select the last row so it will scroll into view...
+                Log.d("Speed", Integer.toString(mAdapter.getCount()));
+                mChatListView.smoothScrollToPosition(mAdapter.getCount() - 1);
+            }
+        });
     }
+
+
+//    private class AsyncCaller extends AsyncTask<Void, Void, Void> {
+//        ProgressDialog pdLoading = new ProgressDialog(MainChatActivity.this);
+//
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//
+//            //this method will be running on UI thread
+//            pdLoading.setMessage("\tLoading Messages...");
+//            pdLoading.show();
+//        }
+//
+//        @Override
+//        protected Void doInBackground(Void... params) {
+//
+//            mAdapter = new ChatAdapter(MainChatActivity.this, mDatabaseRef, mDisplayName);
+//            mChatListView.setAdapter(mAdapter);
+//
+////            scrollMyListViewToBottom();
+//
+//
+//            //this method will be running on background thread so don't update UI from here
+//            //do your long running http tasks here,you don't want to pass argument and u can access the parent class' variable url over here
+//
+//
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Void result) {
+//            super.onPostExecute(result);
+//
+//            //this method will be running on UI thread
+//            scrollMyListViewToBottom();
+//            pdLoading.dismiss();
+//        }
+//
+//    }
 }
