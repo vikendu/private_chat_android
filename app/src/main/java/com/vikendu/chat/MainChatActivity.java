@@ -1,6 +1,7 @@
 package com.vikendu.chat;
 
-import android.content.SharedPreferences;
+import android.app.ProgressDialog;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -34,8 +35,10 @@ public class MainChatActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main_chat);
 
         setupUsername();
+        Log.d("Speed", "username set up");
 
         mDatabaseRef = FirebaseDatabase.getInstance().getReference();
+        Log.d("Speed", "Database ref gotten");
 
         // Link the Views in the layout to the Java code
         mInputText = (EditText) findViewById(R.id.messageInput);
@@ -64,8 +67,7 @@ public class MainChatActivity extends AppCompatActivity {
 
     }
 
-    private void setupUsername()
-    {
+    private void setupUsername() {
 //        SharedPreferences prefs = getSharedPreferences(RegisterActivity.CHAT_PREFS, MODE_PRIVATE);
 //
 //        mDisplayName = prefs.getString(RegisterActivity.DISPLAY_NAME_KEY, null);
@@ -83,20 +85,22 @@ public class MainChatActivity extends AppCompatActivity {
 
         String message_text = mInputText.getText().toString();
 
-        if(!message_text.equals(""))
-        {
+        if (!message_text.equals("")) {
             Message chat = new Message(message_text, mDisplayName);
             mDatabaseRef.child("message").push().setValue(chat);
             mInputText.setText("");
         }
 
     }
+
     @Override
-    public void onStart()
-    {
+    public void onStart() {
         super.onStart();
-        mAdapter = new ChatAdapter(this, mDatabaseRef, mDisplayName);
-        mChatListView.setAdapter(mAdapter);
+//        mAdapter = new ChatAdapter(this, mDatabaseRef, mDisplayName);
+//        mChatListView.setAdapter(mAdapter);
+
+        new AsyncCaller().execute();
+        Log.d("Speed", "Adapter gotten");
 
     }
 
@@ -109,4 +113,40 @@ public class MainChatActivity extends AppCompatActivity {
 
     }
 
+
+    private class AsyncCaller extends AsyncTask<Void, Void, Void> {
+        ProgressDialog pdLoading = new ProgressDialog(MainChatActivity.this);
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            //this method will be running on UI thread
+            pdLoading.setMessage("\tLoading Messages...");
+            pdLoading.show();
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+
+            mAdapter = new ChatAdapter(MainChatActivity.this, mDatabaseRef, mDisplayName);
+            mChatListView.setAdapter(mAdapter);
+
+            //this method will be running on background thread so don't update UI frome here
+            //do your long running http tasks here,you dont want to pass argument and u can access the parent class' variable url over here
+
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+
+            //this method will be running on UI thread
+
+            pdLoading.dismiss();
+        }
+
+    }
 }

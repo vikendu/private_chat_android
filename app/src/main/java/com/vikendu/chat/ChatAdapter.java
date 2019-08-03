@@ -3,6 +3,7 @@ package com.vikendu.chat;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,7 +21,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 public class ChatAdapter extends BaseAdapter {
 
@@ -68,6 +68,8 @@ public class ChatAdapter extends BaseAdapter {
 
         mSnapshotList = new ArrayList<>();
 
+        Log.d("Speed", "Done with constructor");
+
     }
 
     static class ViewHolder
@@ -80,7 +82,9 @@ public class ChatAdapter extends BaseAdapter {
     @Override
     public int getCount() {
 
+        Log.d("Speed", "getCount");
         return mSnapshotList.size();
+
     }
 
     @Override
@@ -128,7 +132,7 @@ public class ChatAdapter extends BaseAdapter {
         String msg = message.getMessage();
         holder.body.setText(msg);
 
-
+        Log.d("Speed", "Layout inflated");
         return convertView;
     }
 
@@ -153,6 +157,7 @@ public class ChatAdapter extends BaseAdapter {
 
         holder.authorName.setLayoutParams(holder.params);
         holder.body.setLayoutParams(holder.params);
+        Log.d("Speed", "Row Styled");
     }
 
     public void cleanup()
