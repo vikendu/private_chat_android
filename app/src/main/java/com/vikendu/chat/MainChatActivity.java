@@ -1,12 +1,14 @@
 package com.vikendu.chat;
 
-import android.app.ProgressDialog;
+//import android.app.ProgressDialog;
+//import android.content.Intent;
+//import android.os.AsyncTask;
 import android.content.Intent;
-import android.os.AsyncTask;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.os.Handler;
+//import android.os.Handler;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -65,6 +67,18 @@ public class MainChatActivity extends AppCompatActivity {
             }
         });
 
+        mSendButton.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                SharedPreferences preferences = getSharedPreferences("login",MODE_PRIVATE);
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.clear();
+                editor.commit();
+                goToLogin();
+                return false;
+            }
+        });
+
     }
 
     private void setupUsername() {
@@ -100,6 +114,7 @@ public class MainChatActivity extends AppCompatActivity {
         mChatListView.setAdapter(mAdapter);
 
         //new AsyncCaller().execute();
+        scrollMyListViewToBottom();
 
         Log.d("Speed", "Adapter gotten");
 
@@ -134,43 +149,11 @@ public class MainChatActivity extends AppCompatActivity {
         });
     }
 
+    private void goToLogin()
+    {
+        Intent intent = new Intent(this, LoginActivity.class);
+        finish();
+        startActivity(intent);
+    }
 
-//    private class AsyncCaller extends AsyncTask<Void, Void, Void> {
-//        ProgressDialog pdLoading = new ProgressDialog(MainChatActivity.this);
-//
-//        @Override
-//        protected void onPreExecute() {
-//            super.onPreExecute();
-//
-//            //this method will be running on UI thread
-//            pdLoading.setMessage("\tLoading Messages...");
-//            pdLoading.show();
-//        }
-//
-//        @Override
-//        protected Void doInBackground(Void... params) {
-//
-//            mAdapter = new ChatAdapter(MainChatActivity.this, mDatabaseRef, mDisplayName);
-//            mChatListView.setAdapter(mAdapter);
-//
-////            scrollMyListViewToBottom();
-//
-//
-//            //this method will be running on background thread so don't update UI from here
-//            //do your long running http tasks here,you don't want to pass argument and u can access the parent class' variable url over here
-//
-//
-//            return null;
-//        }
-//
-//        @Override
-//        protected void onPostExecute(Void result) {
-//            super.onPostExecute(result);
-//
-//            //this method will be running on UI thread
-//            scrollMyListViewToBottom();
-//            pdLoading.dismiss();
-//        }
-//
-//    }
 }
