@@ -20,6 +20,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 
 import androidx.annotation.NonNull;
 
@@ -169,10 +171,29 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void saveUsername()
     {
-        String display_name = mUsernameView.getText().toString();
-        SharedPreferences prefs = getSharedPreferences(CHAT_PREFS, 0);
 
-        prefs.edit().putString(DISPLAY_NAME_KEY, display_name).apply();
+        FirebaseUser user = mAuth.getCurrentUser();
+        String display_name = mUsernameView.getText().toString();
+
+        if (user !=null) {
+            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                    .setDisplayName(display_name)
+                    .build();
+
+            user.updateProfile(profileUpdates)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Log.d("FlashChat", "User name updated.");
+                            }
+                        }
+                    });
+
+        }
+//        SharedPreferences prefs = getSharedPreferences(CHAT_PREFS, 0);
+//
+//        prefs.edit().putString(DISPLAY_NAME_KEY, display_name).apply();
     }
 
 

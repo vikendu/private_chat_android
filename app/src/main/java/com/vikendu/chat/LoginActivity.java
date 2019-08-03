@@ -1,7 +1,9 @@
 package com.vikendu.chat;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -30,6 +32,8 @@ public class LoginActivity extends AppCompatActivity {
     private EditText mPasswordView;
 
     private FirebaseAuth mAuth;
+
+    private SharedPreferences loginPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +66,14 @@ public class LoginActivity extends AppCompatActivity {
 //            attemptLogin();
 //        }
 
+        //androidColors[] = getResources().getIntArray(R.array.androidcolors);
+
+        loginPref = getSharedPreferences("login",MODE_PRIVATE);
+
+        if(loginPref.getBoolean("logged",false)){
+            goToChatActivity();
+        }
+
     }
 
     // Executed when Sign in button pressed
@@ -93,6 +105,8 @@ public class LoginActivity extends AppCompatActivity {
         {
             Toast.makeText(this, "Login in progress", Toast.LENGTH_SHORT).show();
 
+
+
             mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
@@ -105,15 +119,23 @@ public class LoginActivity extends AppCompatActivity {
                     }
                     else
                     {
-                        Intent intent = new Intent(LoginActivity.this, MainChatActivity.class);
-                        finish();
-                        startActivity(intent);
+                        loginPref.edit().putBoolean("logged",true).apply();
+                        goToChatActivity();
+
                     }
                 }
             });
         }
 
 
+
+    }
+
+    private void goToChatActivity()
+    {
+        Intent intent = new Intent(LoginActivity.this, MainChatActivity.class);
+        finish();
+        startActivity(intent);
 
     }
 

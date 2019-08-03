@@ -2,6 +2,8 @@ package com.vikendu.chat;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +20,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class ChatAdapter extends BaseAdapter {
 
@@ -115,6 +118,10 @@ public class ChatAdapter extends BaseAdapter {
         final Message message = getItem(position);
         final ViewHolder holder = (ViewHolder) convertView.getTag();
 
+        boolean isMe = message.getAuthor().equals(mDisplayname);
+        setChatRowStyle(isMe, holder);
+
+
         String author = message.getAuthor();
         holder.authorName.setText(author);
 
@@ -123,6 +130,29 @@ public class ChatAdapter extends BaseAdapter {
 
 
         return convertView;
+    }
+
+    private void setChatRowStyle(boolean is_me, ViewHolder holder)
+    {
+
+        //int randomAndroidColor = androidColors[new Random().nextInt(androidColors.length)];
+
+        if(is_me)
+        {
+            holder.params.gravity = Gravity.END;
+            holder.authorName.setTextColor(Color.parseColor("#a1dd70"));
+            holder.body.setBackgroundResource(R.drawable.bubble2);
+            //holder.body.gravity = Gravity.END;
+        }
+        else
+        {
+            holder.params.gravity = Gravity.START;
+            holder.authorName.setTextColor(Color.BLUE);
+            holder.body.setBackgroundResource(R.drawable.bubble1);
+        }
+
+        holder.authorName.setLayoutParams(holder.params);
+        holder.body.setLayoutParams(holder.params);
     }
 
     public void cleanup()
