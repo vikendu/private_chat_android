@@ -3,6 +3,8 @@ package com.vikendu.chat;
 //import android.app.ProgressDialog;
 //import android.content.Intent;
 //import android.os.AsyncTask;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -67,17 +69,41 @@ public class MainChatActivity extends AppCompatActivity {
             }
         });
 
+        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which){
+                    case DialogInterface.BUTTON_POSITIVE:
+
+
+                        SharedPreferences preferences = getSharedPreferences("login",MODE_PRIVATE);
+                        SharedPreferences.Editor editor = preferences.edit();
+                        editor.clear();
+                        editor.commit();
+                        goToLogin();
+
+                        break;
+
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        //No button clicked
+                        break;
+                }
+            }
+        };
+
+
         mSendButton.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                SharedPreferences preferences = getSharedPreferences("login",MODE_PRIVATE);
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.clear();
-                editor.commit();
-                goToLogin();
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainChatActivity.this);
+                builder.setMessage("Are you sure you want to Log Out?").setPositiveButton("Yes", dialogClickListener)
+                        .setNegativeButton("No", dialogClickListener).show();
+
                 return false;
             }
         });
+
 
     }
 
