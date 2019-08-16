@@ -9,7 +9,6 @@ public class SplashActivity extends Activity {
 
     private final int SPLASH_DISPLAY_LENGTH = 1200;
 
-
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
@@ -18,7 +17,8 @@ public class SplashActivity extends Activity {
         new Handler().postDelayed(new Runnable(){
             @Override
             public void run() {
-                //Create an Intent that will start the Menu-Activity.
+
+                //Intent to start the login activity/MainChatActivity
                 Intent mainIntent = new Intent(SplashActivity.this, LoginActivity.class);
                 SplashActivity.this.startActivity(mainIntent);
                 SplashActivity.this.finish();

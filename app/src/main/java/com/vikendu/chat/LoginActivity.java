@@ -1,7 +1,6 @@
 package com.vikendu.chat;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -28,16 +27,12 @@ import com.google.firebase.iid.InstanceIdResult;
 
 public class LoginActivity extends AppCompatActivity {
 
-    // TODO: Add member variables here:
-    // UI references.
+    private String TAG = "Firebase";
+
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
-
     private FirebaseAuth mAuth;
-
     private SharedPreferences loginPref;
-
-    private String TAG = "Firebase";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,11 +53,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        // TODO: Grab an instance of FirebaseAuth
         mAuth = FirebaseAuth.getInstance();
-
-
-
 
         /*FOLLOWING CODE IS TO IMPLEMENT NOTIFICATIONS!!!!!!*/
 
@@ -85,14 +76,7 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 });
 
-
-
-
-
-
         /*DELETE IF ISSUES OCCUR!!*/
-
-
 
 //        if(mAuth.getCurrentUser() != null)
 //        {
@@ -104,7 +88,7 @@ public class LoginActivity extends AppCompatActivity {
 //            attemptLogin();
 //        }
 
-        //androidColors[] = getResources().getIntArray(R.array.androidcolors);
+//        androidColors[] = getResources().getIntArray(R.array.androidcolors);
 
         loginPref = getSharedPreferences("login",MODE_PRIVATE);
 
@@ -113,8 +97,6 @@ public class LoginActivity extends AppCompatActivity {
         }
 
     }
-
-
 
     // Executed when Sign in button pressed
     public void signInExistingUser(View v)   {
@@ -129,13 +111,10 @@ public class LoginActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    // TODO: Complete the attemptLogin() method
     private void attemptLogin() {
 
         String email = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
-
-
 
         if(email.equals("") || password.equals(""))
         {
@@ -144,8 +123,6 @@ public class LoginActivity extends AppCompatActivity {
         else
         {
             Toast.makeText(this, "Login in progress", Toast.LENGTH_SHORT).show();
-
-
 
             mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                 @Override
@@ -161,14 +138,10 @@ public class LoginActivity extends AppCompatActivity {
                     {
                         loginPref.edit().putBoolean("logged",true).apply();
                         goToChatActivity();
-
                     }
                 }
             });
         }
-
-
-
     }
 
     private void goToChatActivity()
@@ -176,7 +149,6 @@ public class LoginActivity extends AppCompatActivity {
         Intent intent = new Intent(LoginActivity.this, MainChatActivity.class);
         finish();
         startActivity(intent);
-
     }
 
     private void showLoginFailed(String message)
@@ -188,7 +160,4 @@ public class LoginActivity extends AppCompatActivity {
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();
     }
-
-
-
 }

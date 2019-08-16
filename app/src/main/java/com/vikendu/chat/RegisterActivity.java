@@ -26,24 +26,17 @@ import com.google.firebase.auth.UserProfileChangeRequest;
 
 import androidx.annotation.NonNull;
 
-
 public class RegisterActivity extends AppCompatActivity {
 
-    // Constants
     public static final String CHAT_PREFS = "ChatPrefs";
     public static final String DISPLAY_NAME_KEY = "username";
 
-    // TODO: Add member variables here:
-    // UI references.
     private AutoCompleteTextView mEmailView;
     private AutoCompleteTextView mUsernameView;
     private EditText mPasswordView;
     private EditText mConfirmPasswordView;
 
-    // Firebase instance variables
     private FirebaseAuth mAuth;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +48,7 @@ public class RegisterActivity extends AppCompatActivity {
         mConfirmPasswordView = (EditText) findViewById(R.id.register_confirm_password);
         mUsernameView = (AutoCompleteTextView) findViewById(R.id.register_username);
 
-        // Keyboard sign in action
+        //Keyboard sign in action
         mConfirmPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
@@ -68,7 +61,6 @@ public class RegisterActivity extends AppCompatActivity {
         });
 
         mAuth = FirebaseAuth.getInstance();
-
 
     }
 
@@ -144,32 +136,9 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void createNewUser() {
-//        String email = mEmailView.getText().toString();
-//        String password = mPasswordView.getText().toString();
-//
-//        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-//            @Override
-//            public void onComplete(@NonNull Task<AuthResult> task) {
-//                Log.d("Register", "Registering" + task.isSuccessful());
-//
-//                if(!task.isSuccessful())
-//                {
-//                    Log.d("Register", "User Reg Failed");
-//
-//                    showRegistrationFailed("Registration Failed!");
-//                }
-//                else
-//                {
-//                    saveUsername();
-//                    Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
-//                    startActivity(intent);
-//                    finish();
-//                }
-//            }
-//        });
+
         new AsyncCaller().execute();
     }
-
 
     private void saveUsername()
     {
@@ -191,13 +160,13 @@ public class RegisterActivity extends AppCompatActivity {
                             }
                         }
                     });
-
         }
+        /*Username not sustained using SharedPreferences*/
 //        SharedPreferences prefs = getSharedPreferences(CHAT_PREFS, 0);
 //
 //        prefs.edit().putString(DISPLAY_NAME_KEY, display_name).apply();
-    }
 
+    }
 
     private void showRegistrationFailed(String message)
     {
@@ -217,15 +186,13 @@ public class RegisterActivity extends AppCompatActivity {
         protected void onPreExecute() {
             super.onPreExecute();
 
-            //this method will be running on UI thread
+            //On Main thread(UI thread)
             pdLoading.setMessage("\tRegistering you...");
             pdLoading.show();
         }
 
         @Override
         protected Void doInBackground(Void... params) {
-
-
 
             String email = mEmailView.getText().toString();
             String password = mPasswordView.getText().toString();
@@ -251,7 +218,6 @@ public class RegisterActivity extends AppCompatActivity {
                 }
             });
 
-
             return null;
         }
 
@@ -259,11 +225,9 @@ public class RegisterActivity extends AppCompatActivity {
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
 
-            //this method will be running on UI thread
-
+            //On Main thread(UI thread)
             pdLoading.dismiss();
         }
-
     }
 
     @Override
@@ -276,8 +240,4 @@ public class RegisterActivity extends AppCompatActivity {
         finish();
 
     }
-
-
-
-
 }

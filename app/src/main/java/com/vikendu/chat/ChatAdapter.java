@@ -33,9 +33,10 @@ public class ChatAdapter extends BaseAdapter {
         @Override
         public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
+            //mDataSnapshot = dataSnapshot;
             mSnapshotList.add(dataSnapshot);
             notifyDataSetChanged();
-
+            //new AsyncCaller().execute();
         }
 
         @Override
@@ -72,8 +73,7 @@ public class ChatAdapter extends BaseAdapter {
 
     }
 
-    static class ViewHolder
-    {
+    static class ViewHolder {
         TextView authorName;
         TextView body;
         LinearLayout.LayoutParams params;
@@ -94,9 +94,6 @@ public class ChatAdapter extends BaseAdapter {
         DataSnapshot snapshot = mSnapshotList.get(position);
         return snapshot.getValue(Message.class);
 
-
-
-        //return null;
     }
 
     @Override
@@ -107,14 +104,13 @@ public class ChatAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        if(convertView == null)
-        {
-            LayoutInflater inflater = (LayoutInflater)mActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        if (convertView == null) {
+            LayoutInflater inflater = (LayoutInflater) mActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.chat_msg_row, parent, false);
 
             final ViewHolder holder = new ViewHolder();
             holder.authorName = (TextView) convertView.findViewById(R.id.author);
-            holder.body =  (TextView) convertView.findViewById(R.id.message);
+            holder.body = (TextView) convertView.findViewById(R.id.message);
             holder.params = (LinearLayout.LayoutParams) holder.authorName.getLayoutParams();
 
             convertView.setTag(holder);
@@ -137,20 +133,14 @@ public class ChatAdapter extends BaseAdapter {
         return convertView;
     }
 
-    private void setChatRowStyle(boolean is_me, ViewHolder holder)
-    {
+    private void setChatRowStyle(boolean is_me, ViewHolder holder) {
 
-        //int randomAndroidColor = androidColors[new Random().nextInt(androidColors.length)];
-
-        if(is_me)
-        {
+        if (is_me) {
             holder.params.gravity = Gravity.END;
             holder.authorName.setTextColor(Color.parseColor("#a1dd70"));
             holder.body.setBackgroundResource(R.drawable.bubble2);
-            //holder.body.gravity = Gravity.END;
         }
-        else
-        {
+        else {
             holder.params.gravity = Gravity.START;
             holder.authorName.setTextColor(Color.BLUE);
             holder.body.setBackgroundResource(R.drawable.bubble1);
@@ -158,12 +148,11 @@ public class ChatAdapter extends BaseAdapter {
 
         holder.authorName.setLayoutParams(holder.params);
         holder.body.setLayoutParams(holder.params);
+
         Log.d("Speed", "Row Styled");
     }
 
-
-    public void cleanup()
-    {
+    public void cleanup() {
         mDatabaseRef.removeEventListener(mListner);
     }
 }

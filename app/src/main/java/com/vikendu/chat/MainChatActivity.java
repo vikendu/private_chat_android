@@ -1,8 +1,5 @@
 package com.vikendu.chat;
 
-//import android.app.ProgressDialog;
-//import android.content.Intent;
-//import android.os.AsyncTask;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -10,7 +7,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 
-//import android.os.Handler;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -25,10 +21,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-
 public class MainChatActivity extends AppCompatActivity {
 
-    // TODO: Add member variables here:
     private String mDisplayName;
     private ListView mChatListView;
     private EditText mInputText;
@@ -47,7 +41,6 @@ public class MainChatActivity extends AppCompatActivity {
         mDatabaseRef = FirebaseDatabase.getInstance().getReference();
         Log.d("Speed", "Database ref gotten");
 
-        // Link the Views in the layout to the Java code
         mInputText = (EditText) findViewById(R.id.messageInput);
         mSendButton = (ImageButton) findViewById(R.id.sendButton);
         mChatListView = (ListView) findViewById(R.id.chat_list_view);
@@ -75,17 +68,18 @@ public class MainChatActivity extends AppCompatActivity {
                 switch (which){
                     case DialogInterface.BUTTON_POSITIVE:
 
-
                         SharedPreferences preferences = getSharedPreferences("login",MODE_PRIVATE);
                         SharedPreferences.Editor editor = preferences.edit();
+
                         editor.clear();
                         editor.commit();
+
                         goToLogin();
 
                         break;
 
                     case DialogInterface.BUTTON_NEGATIVE:
-                        //No button clicked
+
                         break;
                 }
             }
@@ -103,21 +97,23 @@ public class MainChatActivity extends AppCompatActivity {
                 return false;
             }
         });
-
-
     }
 
     private void setupUsername() {
+
+        /*Switched from SharedPreferences to Firebase username storage*/
+
 //        SharedPreferences prefs = getSharedPreferences(RegisterActivity.CHAT_PREFS, MODE_PRIVATE);
 //
 //        mDisplayName = prefs.getString(RegisterActivity.DISPLAY_NAME_KEY, null);
 //        if(mDisplayName == null) mDisplayName = "Anonymous";
 
+        /*Delete for local storage usage && Comment the next 2 lines*/
+
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         mDisplayName = user.getDisplayName();
 
     }
-
 
     private void sendMessage() {
 
@@ -145,13 +141,13 @@ public class MainChatActivity extends AppCompatActivity {
         Log.d("Speed", "Adapter gotten");
 
     }
+
 //    @Override
 //    public void onResume()
 //    {
 //        super.onResume();
 //        scrollMyListViewToBottom();
 //    }
-
 
     @Override
     public void onStop() {
@@ -181,5 +177,4 @@ public class MainChatActivity extends AppCompatActivity {
         finish();
         startActivity(intent);
     }
-
 }
