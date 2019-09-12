@@ -20,12 +20,15 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class NotificationService extends Service {
 
     private static final int NOTIF_ID = 1;
     private static final String NOTIF_CHANNEL_ID = "1";
     private static final String NOTIF_CHANNEL_ID_2 = "2";
+    private int initial_count = 0;
+    private String message_recv;
 
     private DatabaseReference mReference;
 
@@ -36,39 +39,69 @@ public class NotificationService extends Service {
         return null;
     }
 
-    private ChildEventListener mListner = new ChildEventListener() {
+//    private ChildEventListener mListner = new ChildEventListener() {
+//        @Override
+//        public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+//
+//
+////            Log.d("Notif", "OnChildAdded");
+////            newMessageRecieved();
+//
+//        }
+//
+//        @Override
+//        public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+//
+//            Log.d("Notif", "OnChildRemoved");
+//            newMessageRecieved();
+//        }
+//
+//        @Override
+//        public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+//
+////            Log.d("Notif", "OnChildRemoved");
+////            newMessageRecieved();
+//
+//        }
+//
+//        @Override
+//        public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+//
+//        }
+//
+//        @Override
+//        public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//        }
+//    };
+
+
+    ValueEventListener valueEventListener = new ValueEventListener() {
         @Override
-        public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-
+        public void onDataChange(DataSnapshot dataSnapshot) {
+            if(initial_count == 0)
+            {
+                //To ignore the connection initialisation
+                initial_count++;
+            }
+            else if(initial_count >= 1)
+            {
+                message_recv = (String)dataSnapshot.child("author").getValue();
+                newMessageRecieved(message_recv);
+                Log.d("Notif",message_recv);
+            }
             Log.d("Notif", "OnChildAdded");
-            newMessageRecieved();
-
-        }
-
-        @Override
-        public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-        }
-
-        @Override
-        public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-            Log.d("Notif", "OnChildRemoved");
-            newMessageRecieved();
-
-        }
-
-        @Override
-        public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
         }
 
         @Override
         public void onCancelled(@NonNull DatabaseError databaseError) {
-
+            //Log.d(TAG, databaseError.getMessage()); //Log errors
         }
     };
+
+
+
 
 //    private void createNotificationChannel() {
 //        // Create the NotificationChannel, but only on API 26+ because
@@ -92,7 +125,9 @@ public class NotificationService extends Service {
         mReference = FirebaseDatabase.getInstance().getReference();
 
         mReference = mReference.child("message");
-        mReference.addChildEventListener(mListner);
+        mReference.keepSynced(false);
+//        mReference.addChildEventListener(mListner);
+        mReference.addValueEventListener(valueEventListener);
 
         startForeground();
         return super.onStartCommand(intent, flags, startId);
@@ -108,14 +143,14 @@ public class NotificationService extends Service {
         startForeground(NOTIF_ID, new NotificationCompat.Builder(this,
                 NOTIF_CHANNEL_ID) // don't forget create a notification channel first
                 .setOngoing(true)
-                .setSmallIcon(R.drawable.splash_icon)
+                .setSmallIcon(R.drawable.speech_bubble)
                 .setContentTitle(getString(R.string.app_name))
-                .setContentText("Notification Service Started")
+                .setContentText("Notification Service")
                 .setContentIntent(pendingIntent)
                 .build());
     }
 
-    private void newMessageRecieved()
+    private void newMessageRecieved(String author)
     {
 
         Intent notificationIntent = new Intent(this, MainChatActivity.class);
@@ -124,9 +159,9 @@ public class NotificationService extends Service {
                 notificationIntent, 0);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, NOTIF_CHANNEL_ID_2)
-                .setSmallIcon(R.drawable.splash_icon)
+                .setSmallIcon(R.drawable.speech_bubble)
                 .setContentTitle("Association")
-                .setContentText("New Message")
+                .setContentText(author)
                 .setContentIntent(pendingIntent)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
