@@ -52,8 +52,7 @@ public class MainChatActivity extends AppCompatActivity {
 
 
 
-        Intent myService = new Intent(this, NotificationService.class);
-        stopService(myService);
+
 
 
 
@@ -63,9 +62,11 @@ public class MainChatActivity extends AppCompatActivity {
             // Support for Android Oreo: Notification Channels
             NotificationChannel channel = new NotificationChannel(
                     "1",
-                    "Persitant",
-                    NotificationManager.IMPORTANCE_DEFAULT);
+                    "Persitant Service",
+                    NotificationManager.IMPORTANCE_LOW);
+            channel.setSound(null, null);
             manager.createNotificationChannel(channel);
+
         }
 
         NotificationManager message =
@@ -221,5 +222,14 @@ public class MainChatActivity extends AppCompatActivity {
         Intent intent = new Intent(this, LoginActivity.class);
         finish();
         startActivity(intent);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        Intent myService = new Intent(this, NotificationService.class);
+        stopService(myService);
+
     }
 }

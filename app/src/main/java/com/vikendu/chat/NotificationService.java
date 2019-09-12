@@ -88,7 +88,7 @@ public class NotificationService extends Service {
             {
                 message_recv = (String)dataSnapshot.child("author").getValue();
                 newMessageRecieved(message_recv);
-                Log.d("Notif",message_recv);
+//                Log.d("Notif",message_recv+"new Message");
             }
             Log.d("Notif", "OnChildAdded");
 
@@ -125,7 +125,7 @@ public class NotificationService extends Service {
         mReference = FirebaseDatabase.getInstance().getReference();
 
         mReference = mReference.child("message");
-        mReference.keepSynced(false);
+        //mReference.keepSynced(false);
 //        mReference.addChildEventListener(mListner);
         mReference.addValueEventListener(valueEventListener);
 
@@ -144,8 +144,7 @@ public class NotificationService extends Service {
                 NOTIF_CHANNEL_ID) // don't forget create a notification channel first
                 .setOngoing(true)
                 .setSmallIcon(R.drawable.speech_bubble)
-                .setContentTitle(getString(R.string.app_name))
-                .setContentText("Notification Service")
+                .setContentTitle("Notification Service")
                 .setContentIntent(pendingIntent)
                 .build());
     }
@@ -160,7 +159,7 @@ public class NotificationService extends Service {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, NOTIF_CHANNEL_ID_2)
                 .setSmallIcon(R.drawable.speech_bubble)
-                .setContentTitle("Association")
+                .setContentTitle("New Message")
                 .setContentText(author)
                 .setContentIntent(pendingIntent)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
@@ -169,5 +168,13 @@ public class NotificationService extends Service {
 
 // notificationId is a unique int for each notification that you must define
         notificationManager.notify(2, builder.build());
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        mReference.removeEventListener(valueEventListener);
+
     }
 }
