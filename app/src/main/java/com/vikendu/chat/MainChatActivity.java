@@ -1,11 +1,16 @@
 package com.vikendu.chat;
 
 import android.app.AlertDialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
 
 import android.util.Log;
 import android.view.KeyEvent;
@@ -44,6 +49,43 @@ public class MainChatActivity extends AppCompatActivity {
         mInputText = (EditText) findViewById(R.id.messageInput);
         mSendButton = (ImageButton) findViewById(R.id.sendButton);
         mChatListView = (ListView) findViewById(R.id.chat_list_view);
+
+
+
+        Intent myService = new Intent(this, NotificationService.class);
+        stopService(myService);
+
+
+
+        NotificationManager manager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            // Support for Android Oreo: Notification Channels
+            NotificationChannel channel = new NotificationChannel(
+                    "1",
+                    "Persitant",
+                    NotificationManager.IMPORTANCE_DEFAULT);
+            manager.createNotificationChannel(channel);
+        }
+
+        NotificationManager message =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            // Support for Android Oreo: Notification Channels
+            NotificationChannel channel = new NotificationChannel(
+                    "2",
+                    "New Message",
+                    NotificationManager.IMPORTANCE_DEFAULT);
+            message.createNotificationChannel(channel);
+        }
+
+
+
+
+
+
+
+
 
         mInputText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -152,6 +194,9 @@ public class MainChatActivity extends AppCompatActivity {
     @Override
     public void onStop() {
         super.onStop();
+
+        Intent service_intent = new Intent(this,NotificationService.class);
+        startService(service_intent);
 
         mAdapter.cleanup();
 

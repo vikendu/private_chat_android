@@ -42,10 +42,16 @@ public class ChatAdapter extends BaseAdapter {
         @Override
         public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
+//            mSnapshotList.remove(dataSnapshot);
+//            notifyDataSetChanged();
+
         }
 
         @Override
         public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+//            mSnapshotList.remove(dataSnapshot);
+//            notifyDataSetChanged();
 
         }
 
