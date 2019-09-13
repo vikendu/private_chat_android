@@ -9,9 +9,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.NotificationCompat;
-
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -20,6 +17,8 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -50,16 +49,12 @@ public class MainChatActivity extends AppCompatActivity {
         mSendButton = (ImageButton) findViewById(R.id.sendButton);
         mChatListView = (ListView) findViewById(R.id.chat_list_view);
 
-
-
-
-
-
+        /*Persistant Notification Channel:*/
 
         NotificationManager manager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            // Support for Android Oreo: Notification Channels
+            //Ignored on API 26 and below
             NotificationChannel channel = new NotificationChannel(
                     "1",
                     "Persitant Service",
@@ -69,24 +64,18 @@ public class MainChatActivity extends AppCompatActivity {
 
         }
 
+        /*New Message Notification channel*/
+
         NotificationManager message =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            // Support for Android Oreo: Notification Channels
+            //Ignored on API 26 & below
             NotificationChannel channel = new NotificationChannel(
                     "2",
                     "New Message",
                     NotificationManager.IMPORTANCE_DEFAULT);
             message.createNotificationChannel(channel);
         }
-
-
-
-
-
-
-
-
 
         mInputText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -127,7 +116,6 @@ public class MainChatActivity extends AppCompatActivity {
                 }
             }
         };
-
 
         mSendButton.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -178,19 +166,11 @@ public class MainChatActivity extends AppCompatActivity {
         mAdapter = new ChatAdapter(this, mDatabaseRef, mDisplayName);
         mChatListView.setAdapter(mAdapter);
 
-        //new AsyncCaller().execute();
         scrollMyListViewToBottom();
 
         Log.d("Speed", "Adapter gotten");
 
     }
-
-//    @Override
-//    public void onResume()
-//    {
-//        super.onResume();
-//        scrollMyListViewToBottom();
-//    }
 
     @Override
     public void onStop() {
@@ -206,7 +186,6 @@ public class MainChatActivity extends AppCompatActivity {
     private void scrollMyListViewToBottom() {
 
         mChatListView.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
-        //mChatListView.setAdapter(mAdapter);
         mChatListView.post(new Runnable() {
             @Override
             public void run() {
@@ -222,6 +201,9 @@ public class MainChatActivity extends AppCompatActivity {
         Intent intent = new Intent(this, LoginActivity.class);
         finish();
         startActivity(intent);
+
+        Intent stopFGService = new Intent(this, NotificationService.class);
+        stopService(stopFGService);
     }
 
     @Override

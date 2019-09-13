@@ -1,6 +1,7 @@
 package com.vikendu.chat;
 
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -34,6 +35,8 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private SharedPreferences loginPref;
 
+    DialogInterface.OnClickListener dialogClickListener;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,7 +58,7 @@ public class LoginActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
-        /*FOLLOWING CODE IS TO IMPLEMENT NOTIFICATIONS!!!!!!*/
+        /*FOLLOWING CODE IS TO IMPLEMENT CLOUD NOTIFICATIONS!!!!!!*/
 
         FirebaseInstanceId.getInstance().getInstanceId()
                 .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
@@ -78,23 +81,30 @@ public class LoginActivity extends AppCompatActivity {
 
         /*DELETE IF ISSUES OCCUR!!*/
 
-//        if(mAuth.getCurrentUser() != null)
-//        {
-//            Intent mainIntent = new Intent(LoginActivity.this, MainChatActivity.class);
-//            startActivity(mainIntent);
-//            finish();
-//        }
-//        else{
-//            attemptLogin();
-//        }
-
-//        androidColors[] = getResources().getIntArray(R.array.androidcolors);
-
         loginPref = getSharedPreferences("login",MODE_PRIVATE);
 
         if(loginPref.getBoolean("logged",false)){
             goToChatActivity();
         }
+
+
+        dialogClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which){
+                    case DialogInterface.BUTTON_POSITIVE:
+
+                        loginPref.edit().putBoolean("logged",true).apply();
+                        goToChatActivity();
+                        break;
+
+                    case DialogInterface.BUTTON_NEGATIVE:
+
+                        showLoginFailed("Failed to Login");
+                        break;
+                }
+            }
+        };
 
     }
 
@@ -116,6 +126,10 @@ public class LoginActivity extends AppCompatActivity {
         String email = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
 
+        AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
+        builder.setMessage("Due to limitations on Android 8.0+ there will be a persistant notification to make sure the App stays in Memory.\nTo continue using the application click Accept.").setPositiveButton("Accept", dialogClickListener)
+                .setNegativeButton("Decline", dialogClickListener);
+
         if(email.equals("") || password.equals(""))
         {
             return;
@@ -136,8 +150,7 @@ public class LoginActivity extends AppCompatActivity {
                     }
                     else
                     {
-                        loginPref.edit().putBoolean("logged",true).apply();
-                        goToChatActivity();
+                        builder.show();
                     }
                 }
             });
